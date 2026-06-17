@@ -13,6 +13,8 @@
 - **Codex CLI**: 이 `AGENTS.md` 가 자동 컨텍스트로 로드된다. 역할별 작업은 §3 의 역할 프롬프트를 **순차 실행**하거나, 여러 터미널/`git worktree` 로 **병렬 실행**한다.
 - **Claude Code**: [`.claude/agents/`](.claude/agents/) 의 서브에이전트를 `Agent`(Task) 도구로 **한 메시지에 여러 개 동시 spawn**(병렬). 오케스트레이션은 [`.claude/agents/orchestrator.md`](.claude/agents/orchestrator.md) 참고.
 
+> Codex 무인 실행(`--full-auto`)·worktree 병렬·**MCP 서버**(검색·Playwright 등) 설정은 [`CODEX.md`](CODEX.md) 참고. 무인 루프는 자동승인 모드로 띄워야 안 끊긴다.
+
 ---
 
 ## 1. 작업 대상 파악 (먼저 읽어라)
