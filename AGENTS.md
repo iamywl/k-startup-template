@@ -22,7 +22,7 @@
    - 문서: `1_제안서.md`, `2_개발계획서.md`, `N_과업지시서_vN.md`, `N_1_개발결과보고서_vN.md`, `5_research/README.md`
    - 앱: `projects/<app>/vN.html`, 캡처 `biz/captures/<vN>/`·`biz/captures/mobile/<vN>/`
 3. **역할 문서** — [`.claude/agents/*.md`](.claude/agents/) (각 역할의 책임·산출물·규칙). Codex 는 이 파일들을 직접 읽어 해당 역할로 빙의해 실행한다.
-4. **양식파일** — [`templates/`](templates/) 의 빈 골격을 복사해 새 산출물의 출발점으로 삼는다.
+4. **양식파일·참고자료** — [`forms/`](forms/) 한 디렉터리에 모여 있다(`forms/biz/` 빈 골격, `forms/refs/` 참고 PDF). 골격을 복사해 새 산출물의 출발점으로 삼는다.
 
 ---
 

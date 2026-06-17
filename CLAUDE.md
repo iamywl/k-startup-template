@@ -11,7 +11,7 @@
 | 항목 | 값 |
 |---|---|
 | 워크스페이스 | `k_startup_spare/` — 공모전·창업지원사업·연구과제 신청·수행 작업 공간 |
-| 보관 자료 | [`ref-startup-club-notice.pdf`](ref-startup-club-notice.pdf) · [`ref-business-plan-example.pdf`](ref-business-plan-example.pdf) |
+| 보관 자료 | [`forms/refs/ref-startup-club-notice.pdf`](forms/refs/ref-startup-club-notice.pdf) · [`forms/refs/ref-business-plan-example.pdf`](forms/refs/ref-business-plan-example.pdf) — 키트 보관 원본(작업 시 워크스페이스 루트로 복사) |
 | 산출물 형식 | Markdown → 최종 제출 단계에서만 hwpx/PDF 변환 |
 | 기준 머신 | 사용자 표준 개발 환경 |
 
