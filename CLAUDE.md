@@ -68,10 +68,16 @@ k_startup_spare/
 - **언어**: 한국어 (전문 용어는 원문 병기 허용)
 - **포맷**: Markdown (`.md`)만. hwpx/PDF 변환은 최종 제출 단계에서만.
 - **그림자료(다이어그램·도표·차트) = 논문 형식·흑백 (사용자 지시, 2026-06-16).** `biz/` **문서에 들어가는 모든 그림자료**(Mermaid 다이어그램, 표, 차트, 캡션 도식 등)는 **학술 논문 figure 스타일**로 만든다.
-  - **흑백(monochrome)만** — 흰 배경 + 검은 선/글자 + 회색 음영만 사용. **컬러 금지**(채도 있는 색·배경색·하이라이트 색 금지).
+  - **순수 흑백(검정·흰색 2색만) — 논문 그림처럼 (사용자 지시, 2026-06-18).** **흰 배경(`#ffffff`) + 검은 선·글자·테두리(`#000000`)** 만. **회색 채움·회색 배경·명암 음영 금지**, 컬러 금지(채도색·배경색·하이라이트 금지). 도형은 **흰 바탕에 검은 윤곽선**(line art).
+    - ⚠️ Mermaid `theme:neutral` 은 **회색 박스 채움**을 만들어 "순수 흑백"이 아니다 → **금지**. 아래 검증된 init 을 쓴다.
   - 모든 figure 에 **번호·캡션**을 단다(예: `**그림 1.** 시스템 아키텍처`, `**표 2.** 경쟁사 비교`). 본문에서 "그림 N/표 N"으로 인용.
-  - Mermaid 는 흑백 테마로 강제: 도식 첫 줄에 `%%{init: {'theme':'neutral'}}%%` 를 넣고, 색 지정(`fill:#...` 컬러)·`classDef` 컬러 금지(흑/백/회색 명도만).
-  - 차트(앱 캡처가 아닌 **문서용** 통계 그래프)는 흑백 막대/선/해칭 패턴으로. 색으로 계열을 구분하지 말고 **패턴·명도·라벨**로 구분.
+  - **Mermaid 표준 init (이 한 줄을 도식 첫 줄에 그대로)** — base 테마 + 전 변수 흰/검 강제(렌더 검증됨, 회색 0):
+    ```
+    %%{init: {'theme':'base','themeVariables':{'background':'#ffffff','primaryColor':'#ffffff','primaryBorderColor':'#000000','primaryTextColor':'#000000','secondaryColor':'#ffffff','secondaryBorderColor':'#000000','secondaryTextColor':'#000000','tertiaryColor':'#ffffff','tertiaryBorderColor':'#000000','tertiaryTextColor':'#000000','mainBkg':'#ffffff','secondBkg':'#ffffff','lineColor':'#000000','textColor':'#000000','clusterBkg':'#ffffff','clusterBorder':'#000000','edgeLabelBackground':'#ffffff','actorBkg':'#ffffff','actorBorder':'#000000','noteBkgColor':'#ffffff','noteBorderColor':'#000000','signalColor':'#000000','signalTextColor':'#000000','fontFamily':'Georgia, serif'}}}%%
+    ```
+    색 지정(`fill:#...` 컬러)·`style`·컬러 `classDef` 금지(흰/검만).
+  - 차트(앱 캡처가 아닌 **문서용** 통계 그래프)는 **흰 배경·검은 막대/선·해칭 패턴**으로. 색·회색 음영으로 계열을 구분하지 말고 **해칭 패턴·라벨·테두리**로 구분.
+  - **렌더 눈검수 의무**: 그림은 실제로 렌더(`mmdc -i fig.mmd -o fig.png -b white`)해 PNG 를 **직접 열어** 회색·컬러가 없는 순수 흑백인지 확인한다(앱 캡처의 반응형 눈검수와 동일 원칙).
   - ⚠️ 이 규칙은 **문서(`biz/`)의 그림자료에만** 적용된다. **데모 앱(`projects/`) UI 는 예외** — 앱은 [§3.3](#33-빌드--데모) 디자인 가이드(컬러)를 따른다. (문서=논문 흑백, 앱=디자인가이드 컬러.)
 - **링크**: 상대 경로
 - **이모지**: 섹션 식별·상태 마커 외 남용 금지. (논문형 그림자료 안에는 이모지 금지.)
@@ -603,7 +609,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 | `proposal-writer` | 제안서 집필(PSST·프레임워크·GTM/수익/차별성·구매동인) | `biz/1_제안서.md` |
 | `research-collector` | 출처 수집(목표 **1,000+**), 정직성 검증 | `biz/5_research/` |
 | `differentiation-analyst` | 차별점 **50+** 도출·카테고리화·구매동인 연결 | 제안서 차별성 섹션 |
-| `figure-maker` | **논문형 흑백** 그림자료(Mermaid neutral·표·차트) 생성 | 각 문서 figure |
+| `figure-maker` | **순수 흑백 논문형** 그림자료(Mermaid base 흰/검 강제·표·차트, 회색 0) 생성 | 각 문서 figure |
 | `app-builder` | 데모 앱(기능 **100+**·반응형·디자인가이드) | `projects/<app>/vN.html` |
 | `capture-runner` | 실 구동 캡처(PC+모바일 분리)·반응형 눈검수 | `biz/captures/` |
 | `report-writer` | 과업지시서·개발결과보고서 | `biz/N_*_vN.md` |
@@ -616,6 +622,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
+*template v10 · last_updated: 2026-06-18* — §2.0 그림자료 **순수 흑백**(검정·흰색 2색, 회색 채움 금지) 강화 + Mermaid base 검증 init + 렌더 눈검수
 *template v9 · last_updated: 2026-06-16* — §2.0 그림자료 논문형식·흑백 / §2.1 참고문헌 1,000+·차별점 50+ / §3.3 기능 100+ / §9 병렬 에이전트·Codex 호환 (별도 템플릿 레포)
 *template v8 · last_updated: 2026-06-16* — §8 행동 지침(흔한 LLM 코딩 실수 줄이기) 추가
 *template v7 · last_updated: 2026-06-16* — §3.5 버전별 Git 브랜치 배포 정책 신설 + §2.1 차별화 기술의 구매동인 논증 요건 추가
