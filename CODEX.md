@@ -11,27 +11,33 @@
 
 기본 Codex 는 명령/수정마다 승인을 묻는다. 루프가 안 끊기게 하려면 자동승인으로 띄운다.
 
-```bash
-# 작업 디렉터리(프로젝트 루트)에서 — 대화형 TUI, 저마찰 자동
-codex --full-auto "AGENTS.md 와 .claude/agents 읽고 자율 루프로 진행해"
-
-# 비대화형(스크립트/CI) — 한 번 실행하고 끝
-codex exec --full-auto "AGENTS.md 읽고 게이트 모두 충족까지 진행해"
-```
-
-- `--full-auto` ≈ 샌드박스(workspace-write) + 실패 시에만 승인. 대부분의 무인 루프에 적합.
-- 완전 무인(승인 0, 네트워크 포함)이 필요하면 `--dangerously-bypass-approvals-and-sandbox`(별칭 `--yolo`). **신뢰 환경에서만** — 임의 명령·네트워크를 무승인 실행한다.
-- 세분 제어: `--sandbox {read-only|workspace-write|danger-full-access}`, `--ask-for-approval {untrusted|on-failure|on-request|never}`.
-
-**큰 목표는 이어달리기.** 참고문헌 1,000·기능 100 은 한 세션 컨텍스트를 넘길 수 있다 → 산출물에 `현재/목표`(예: `412 / 1,000`)를 남기는 규칙([AGENTS.md §2](AGENTS.md)) 덕에 **다시 `codex exec` 를 호출하면 남은 분량부터** 이어서 채운다. 셸로 반복:
+**가장 쉬운 방법 — 턴키 런처 [`run.sh`](run.sh).** 게이트 모두 충족(`DONE`)까지 codex 를 무인 모드로 반복 호출한다. 프로젝트가 없으면 공고 PDF 로 **기획 부트스트랩**(AGENTS.md §2.0)부터, 이미 있으면 **처음 관점 전면 재검토**로 더 끌어올린다.
 
 ```bash
-for i in $(seq 1 20); do
-  codex exec --full-auto "AGENTS.md 자율 루프 계속. 미달 게이트만 채우고, 모두 충족이면 'DONE' 출력" \
-    | tee -a .codex-run.log
-  grep -q DONE .codex-run.log && break
-done
+./run.sh                      # 현 디렉터리 자율 진행(공고 PDF 자동 탐색)
+./run.sh 공고-청년창업.pdf      # 공고 PDF 를 출발 씨앗으로
+./run.sh "대학생 중고거래 SaaS" # 한 줄 아이템을 씨앗으로
+MAX_ITERS=30 ./run.sh         # 반복 횟수 조정 (기본 20)
 ```
+
+직접 부르고 싶으면 (무인 = 승인 프롬프트 없이):
+
+```bash
+# 대화형 TUI
+codex --sandbox workspace-write --ask-for-approval never \
+  "AGENTS.md 와 .claude/agents 읽고 자율 루프로 진행해"
+
+# 비대화형(스크립트/CI) — 한 번 실행하고 끝. git repo 밖이면 --skip-git-repo-check
+codex exec --sandbox workspace-write --ask-for-approval never --skip-git-repo-check \
+  "AGENTS.md 읽고 게이트 모두 충족까지 진행해"
+```
+
+- **무인 권장**: `--sandbox workspace-write`(작업폴더 쓰기 허용) + `--ask-for-approval never`(승인 프롬프트 0). ⚠️ 구 `--full-auto` 는 **deprecated**(호환용으로만 남음) — `--sandbox workspace-write` 를 쓴다.
+- 완전 무제한(샌드박스·승인 모두 해제, 네트워크 포함)은 `--dangerously-bypass-approvals-and-sandbox`(별칭 `--yolo`). **신뢰 환경에서만.**
+- 플래그 값: `--sandbox {read-only|workspace-write|danger-full-access}`, `--ask-for-approval {untrusted|on-request|never}`. 정확한 목록은 버전마다 다르니 `codex --help`·`codex exec --help` 로 확인.
+- **디렉터리 신뢰**: 비신뢰 폴더에서 승인이 자꾸 뜨면 `--ask-for-approval never` 로 무인화하거나, `~/.codex/config.toml` 의 `[projects."<경로>"] trust_level = "trusted"` 로 신뢰 등록.
+
+**큰 목표는 이어달리기.** 참고문헌 1,000·기능 100 은 한 세션 컨텍스트를 넘길 수 있다 → 산출물에 `현재/목표`(예: `412 / 1,000`)를 남기는 규칙([AGENTS.md §2](AGENTS.md)) 덕에 **다시 `codex exec` 를 호출하면 남은 분량부터** 이어서 채운다(run.sh 가 이 반복을 대신한다).
 
 ---
 
@@ -43,8 +49,8 @@ Codex 는 Claude Code 처럼 서브에이전트를 자동 spawn 하지 않는다
 # 역할/프로젝트별 worktree 분리 후 백그라운드 병렬 실행
 for role in research-collector app-builder figure-maker; do
   git worktree add ../wt-$role HEAD
-  ( cd ../wt-$role && codex exec --full-auto \
-      ".claude/agents/$role.md 역할로 해당 산출물만 만들어. git 커밋은 하지 마." ) &
+  ( cd ../wt-$role && codex exec --sandbox workspace-write --ask-for-approval never \
+      ".claude/agents/$role.md 를 열어 그 역할로 해당 산출물만 만들어. git 커밋은 하지 마." ) &
 done
 wait
 # 병합·커밋·버전 태그 고정은 오케스트레이터(메인)가 일괄 (CLAUDE.md §3.5)
@@ -85,7 +91,7 @@ args = ["-y", "@modelcontextprotocol/server-filesystem", "."]
 또는 CLI 로: `codex mcp add playwright -- npx -y @playwright/mcp@latest` (지원 버전에서). 등록 확인: `codex mcp list`.
 
 ### 주의
-- MCP 는 **자율성을 바꾸지 않는다** — 여전히 `--full-auto` 로 띄워야 무인 루프가 돈다.
+- MCP 는 **자율성을 바꾸지 않는다** — 여전히 무인 모드(`--sandbox workspace-write --ask-for-approval never`)로 띄워야 루프가 안 끊긴다.
 - 각 MCP 서버의 **도구 스키마가 컨텍스트를 먹는다** → 꼭 필요한 서버만 켠다.
 - 검색·일부 서버는 **API 키** 필요. 키는 `.env`/셸 env 로, **레포에 커밋 금지**([CLAUDE.md §3.1](CLAUDE.md)).
 - Playwright MCP 도 캡처는 [§2.4 캡처 의무](CLAUDE.md) 그대로: **PC·모바일 폴더 분리 + 스크린샷 눈검수**.

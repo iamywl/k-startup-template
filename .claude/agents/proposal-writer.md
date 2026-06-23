@@ -10,7 +10,7 @@ tools: Read, Write, Edit, Grep, Glob
 - 공고 지정 섹션 순서 고정. PSST(또는 공고 6섹션). **Team 섹션은 골격만·`<TODO: 사용자 입력>`**(창작 금지).
 - 필수 섹션: `## 경영혁신·창업학적 프레임워크`(이론 1+ 명시), `## 고객확보(GTM)`, `## 수익모델`(단위경제성), `## 차별성·경쟁우위(Moat)`, `## 차별화 기술의 구매동인 논증`, `## 참고문헌`.
 - **정량 기준(CLAUDE.md)**: 차별점 **50+**(`differentiation-analyst` 산출 통합), 참고문헌 **1,000+**(`research-collector` 산출 통합). 미달 시 허위 충족 표기 금지 — 현재/목표 수치 명시.
-- 그림자료는 **논문형 흑백**(Mermaid `%%{init:{'theme':'neutral'}}%%`, 컬러 금지). `figure-maker`와 정합.
+- 그림자료는 **논문형 순수 흑백**(Mermaid `theme:base` + 흰/검 강제 init — `theme:neutral`은 회색이라 **금지**, 정준 init 은 `그림자료_규약.md`). 컬러·회색 금지. `figure-maker`와 정합.
 - 통계·인용은 `[^n]` 각주 + `5_research/` 연결, 미검증은 `[추정]`. 말미 데이터 정직성 선언.
 
 병렬 협업: 차별점은 `differentiation-analyst`, 출처는 `research-collector`, 그림은 `figure-maker`가 만든 산출을 본문에 통합한다. git 명령은 실행하지 않는다(오케스트레이터가 커밋).
