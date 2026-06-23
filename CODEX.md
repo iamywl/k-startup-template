@@ -72,23 +72,34 @@ MCP 서버를 붙이면 Codex 의 도구가 좋아진다. 이 워크플로에서
 | **filesystem** | 전 역할 | 스코프된 파일 읽기/쓰기 표준화 |
 | **git / github** | orchestrator | 커밋·브랜치·PR 표준화 |
 
-### 설정 — `~/.codex/config.toml`
+### 설정 — CLI (권장)
+형식: `codex mcp add <이름> [--env KEY=VAL] -- <stdio 실행명령>`
+
+```bash
+codex mcp add playwright -- npx -y @playwright/mcp@latest
+codex mcp add tavily --env TAVILY_API_KEY=$TAVILY_API_KEY -- npx -y tavily-mcp
+codex mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem .
+
+codex mcp list            # 등록 확인 (TUI 안에서는 /mcp)
+codex mcp --help          # 정확한 옵션은 버전마다 다름
+```
+
+### 또는 `~/.codex/config.toml` 직접
 ```toml
 [mcp_servers.playwright]
 command = "npx"
 args = ["-y", "@playwright/mcp@latest"]
 
-# 웹검색 (API 키 필요)
 [mcp_servers.tavily]
 command = "npx"
 args = ["-y", "tavily-mcp"]
-env = { TAVILY_API_KEY = "sk-..." }   # 키는 셸 env 로 주입 권장, 커밋 금지
+env_vars = ["TAVILY_API_KEY"]   # 셸 env 에서 키를 전달(레포에 키 커밋 금지)
 
 [mcp_servers.filesystem]
 command = "npx"
 args = ["-y", "@modelcontextprotocol/server-filesystem", "."]
 ```
-또는 CLI 로: `codex mcp add playwright -- npx -y @playwright/mcp@latest` (지원 버전에서). 등록 확인: `codex mcp list`.
+필드: `command`(필수)·`args`(선택)·`env`(키=값 테이블)·`env_vars`(셸 env 에서 전달할 변수명).
 
 ### 주의
 - MCP 는 **자율성을 바꾸지 않는다** — 여전히 무인 모드(`--sandbox workspace-write --ask-for-approval never`)로 띄워야 루프가 안 끊긴다.
