@@ -179,6 +179,7 @@ ASSESS → PLAN → EXECUTE → VERIFY → REPEAT 를 게이트 모두 충족까
 | 증상 | 원인 / 해결 |
 |:---|:---|
 | Codex 가 규칙을 안 따르는 듯 | Codex 는 **`AGENTS.md` 만 자동 로드**(32KiB 상한). `CLAUDE.md`·`.claude/agents/*.md` 는 자동으로 안 읽힌다 → AGENTS.md §0 지시대로 Codex 가 직접 열어야 한다. "AGENTS.md 읽고 진행해" 로 시작하면 그 절차가 명시돼 있다. |
+| **토큰을 적게 쓰고 금방 끝남 = 얕게 함** | 작업은 방대해서(참고문헌 1,000+·기능 100+) 짧게 끝날 수 없다. AGENTS.md §0(작업 강도)·§2.6(안티패턴)이 골격·"나중에 계속"·미실측 ✅ 를 금지하고, §2.5 가 게이트를 grep/카운트로 실측하게 한다. 그래도 한 번에 다 못 차면 `run.sh` 로 `DONE` 까지 자동 반복(이어달리기). |
 | 매 명령마다 승인 프롬프트 → 루프 끊김 | `--ask-for-approval never` 를 빼먹었다. 위 무인 플래그로 실행. 또는 `~/.codex/config.toml` 에 `[projects."<경로>"] trust_level = "trusted"`. |
 | `--full-auto` 안내가 deprecated 라고 뜸 | 맞다 — `--sandbox workspace-write --ask-for-approval never` 를 쓴다. |
 | `codex: command not found` | 새 터미널을 열거나 npm 전역 bin(`npm bin -g`)을 PATH 에 추가. |
